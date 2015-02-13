@@ -10,7 +10,7 @@ namespace E2ETests
         {
             get
             {
-                return Environment.Is64BitOperatingSystem;
+                return !string.IsNullOrEmpty(Environment.GetEnvironmentVariable("ProgramFiles(x86)"));
             }
         }
 

@@ -1,25 +1,33 @@
 {
-    "compilationOptions": { "warningsAsErrors": "true" },
-    "commands": {
-        "test": "xunit.runner.kre"
-    },
-    "dependencies": {
-        "Microsoft.AspNet.Server.IIS": "1.0.0-*",
-        "Microsoft.AspNet.SignalR.Client": "2.1.1",
-        "Microsoft.AspNet.Testing": "1.0.0-*",
-        "Microsoft.AspNet.WebUtilities": "1.0.0-*",
-        "Microsoft.Framework.Logging.Console": "1.0.0-*",
-        "Microsoft.Framework.Runtime.Interfaces": "1.0.0-*",
-        "Microsoft.Web.Administration": "7.0.0",
-        "xunit.runner.kre": "1.0.0-*"
-    },
-    "frameworks": {
-        "aspnet50": {
-            "frameworkAssemblies": {
-                "System.Data": "",
-                "System.Net.Http": "",
-                "System.Xml": ""
-            }
-        }
-    }
+	"compilationOptions": { "warningsAsErrors": "true" },
+	"commands": {
+		"test": "xunit.runner.kre"
+	},
+	"dependencies": {
+		"Microsoft.AspNet.Server.IIS": "1.0.0-*",
+		"Microsoft.AspNet.SignalR.Client": "2.1.1",
+		"Microsoft.AspNet.Testing": "1.0.0-*",
+		"Microsoft.AspNet.WebUtilities": "1.0.0-*",
+		"Microsoft.Framework.Logging.Console": "1.0.0-*",
+		"Microsoft.Framework.Runtime.Interfaces": "1.0.0-*",
+		"Microsoft.Web.Administration": "7.0.0",
+		"xunit.runner.kre": "1.0.0-*"
+	},
+	"frameworks": {
+		"aspnet50": {
+			"frameworkAssemblies": {
+				"System.Data": "",
+				"System.Net.Http": "",
+				"System.Xml": ""
+			}
+		},
+		"aspnetcore50": {
+			"dependencies": {
+				"System.Data.SqlClient": "4.0.0-beta-*",
+				"System.Net.Http": "4.0.0-beta-*",
+				"System.Xml.XmlDocument": "4.0.0-beta-*",
+				"Microsoft.Win32.Primitives": "4.0.0-beta-*"
+			}
+		}
+	}
 }

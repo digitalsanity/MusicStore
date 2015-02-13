@@ -18,15 +18,15 @@ namespace E2ETests
         private static string GetIISExpressPath(RuntimeArchitecture architecture)
         {
             // Get path to program files
-            var iisExpressPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86), "IIS Express", "iisexpress.exe");
+            var iisExpressPath = Path.Combine(Environment.GetEnvironmentVariable("ProgramFiles(x86)"), "IIS Express", "iisexpress.exe");
 
             // Get path to 64 bit of IIS Express
             if (architecture == RuntimeArchitecture.amd64)
             {
-                iisExpressPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), "IIS Express", "iisexpress.exe");
+                iisExpressPath = Path.Combine(Environment.GetEnvironmentVariable("ProgramFiles"), "IIS Express", "iisexpress.exe");
 
                 // If process is 32 bit, the path points to x86. Replace path to point to x64
-                iisExpressPath = Environment.Is64BitProcess ? iisExpressPath : iisExpressPath.Replace(" (x86)", "");
+                iisExpressPath = IntPtr.Size == 8 ? iisExpressPath : iisExpressPath.Replace(" (x86)", "");
             }
 
             if (!File.Exists(iisExpressPath))
@@ -65,7 +65,7 @@ namespace E2ETests
 
         public static Process StartApplication(StartParameters startParameters, ILogger logger)
         {
-            startParameters.ApplicationPath = Path.GetFullPath(Path.Combine(Environment.CurrentDirectory, APP_RELATIVE_PATH));
+            startParameters.ApplicationPath = Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), APP_RELATIVE_PATH));
 
             //To avoid the KRE_DEFAULT_LIB of the test process flowing into Helios, set it to empty
             var backupRuntimeDefaultLibPath = Environment.GetEnvironmentVariable("KRE_DEFAULT_LIB");
@@ -100,6 +100,7 @@ namespace E2ETests
                 //Reason to do pack here instead of in a common place is use the right runtime to do the packing. Previous line switches to use the right runtime.
                 if (startParameters.BundleApplicationBeforeStart)
                 {
+#if ASPNET50
                     if (startParameters.ServerType == ServerType.IISNativeModule ||
                         startParameters.ServerType == ServerType.IIS)
                     {
@@ -141,18 +142,22 @@ namespace E2ETests
                         Thread.Sleep(1 * 1000);
                     }
                     else
+#endif
                     {
                         KpmBundle(startParameters, logger);
                     }
                 }
 
+#if ASPNET50
                 if (startParameters.ServerType == ServerType.IISNativeModule ||
                     startParameters.ServerType == ServerType.IIS)
                 {
                     startParameters.IISApplication = new IISApplication(startParameters, logger);
                     startParameters.IISApplication.SetupApplication();
                 }
-                else if (startParameters.ServerType == ServerType.IISExpress)
+                else
+#endif
+                if (startParameters.ServerType == ServerType.IISExpress)
                 {
                     hostProcess = StartHeliosHost(startParameters, logger);
                 }
@@ -355,6 +360,7 @@ namespace E2ETests
 
         public static void CleanUpApplication(StartParameters startParameters, Process hostProcess, string musicStoreDbName, ILogger logger)
         {
+#if ASPNET50
             if (startParameters.ServerType == ServerType.IISNativeModule ||
                 startParameters.ServerType == ServerType.IIS)
             {
@@ -364,7 +370,9 @@ namespace E2ETests
                     startParameters.IISApplication.StopAndDeleteAppPool();
                 }
             }
-            else if (hostProcess != null && !hostProcess.HasExited)
+#endif
+            // TODO - verify.
+            if (hostProcess != null && !hostProcess.HasExited)
             {
                 //Shutdown the host process
                 hostProcess.Kill();
