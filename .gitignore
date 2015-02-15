@@ -36,4 +36,3 @@ node_modules
 */*.Spa/public/*
 */*.Spa/wwwroot/lib
 *.ng.ts
-*.sln.ide
